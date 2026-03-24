@@ -22,7 +22,7 @@ class Registerserializer(serializers.ModelSerializer):
             password=password
         )
 
-        # 🔥 create profile
+        
         profile = Userprofile.objects.create(
             user=user,
             **validated_data
