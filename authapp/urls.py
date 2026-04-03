@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.urls import path,include
 from . import views
-from .views import RegisterView
+from .views.auth_views import RegisterAPI
 
 urlpatterns = [
-    path('api/v1/register/',RegisterView.as_view()),
+    path("api/register/", RegisterAPI.as_view(), name="api_register"),
 ]
