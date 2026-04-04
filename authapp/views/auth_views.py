@@ -51,3 +51,24 @@ class LogoutAPI(APIView):
             {"message": "Logged out successfully"},
             status=status.HTTP_200_OK
         )
+#basic session based api (no jwt)
+class ForgotPasswordAPI(APIView):
+    def post(self,request):
+        email=request.data.get("email")
+        if not email:
+            return Response({"error":"Email is required"},status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user=User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({
+                "error":"Email Not Found"
+            },status=status.HTTP_404_NOT_FOUND)
+        
+        token=default_token_generator.make_token(user)
+        reset_link=f"http://dummy-link/reset-password/{user.pk}/{token}/"#default django token 
+        
+        return Response({
+            "message": "Password reset link generated",
+            "reset_link": reset_link
+        }, status=status.HTTP_200_OK)
+        
