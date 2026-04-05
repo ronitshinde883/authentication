@@ -72,3 +72,19 @@ class ForgotPasswordAPI(APIView):
             "reset_link": reset_link
         }, status=status.HTTP_200_OK)
         
+#default session based link
+class ResetPasswordAPI(APIView):
+    def post(self,request,uid,token):
+        password=request.data.get("password")
+        if not password:
+            return Response({"error": "Password is required"}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user=User.objects.get(pk=uid)
+        except User.DoesNotExist:
+            return Response({"error":"inavlid user"},status=status.HTTP_404_NOT_FOUND)
+        if default_token_generator.check_token(user,token):
+            user.set_password(password)
+            user.save()
+            return Response({"message": "Password reset successfully"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Invalid or expired token"}, status=status.HTTP_400_BAD_REQUEST)   
